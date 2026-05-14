@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моей любимой девочки</title>
+    <style>
+        /* Базовые настройки страницы и анимированный темный фон */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #000000, #12020a, #000000, #1a0512);
+            background-size: 400% 400%;
+            animation: gradientBg 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+
+        /* Анимация перелива фона */
+        @keyframes gradientBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Еле заметный паттерн из темно-серых роз поверх фона */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03; /* Едва уловимая видимость */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 100 100' width='60' height='60'%3E%3Cpath fill='%23ffffff' d='M50 25c-5-10-20-10-25-3s-2 15 5 20l20 18 20-18c7-5 10-13 5-20s-20-7-25 3zm0 6c2-5 10-9 15-5s4 9 1 12L50 53l-16-15c-3-3-4-8-1-12s13 0 15 5z'/%3E%3C/svg%3E");
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Контейнер для падающих лепестков */
+        #petals-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Главный интерактивный контейнер */
+        .container {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Розовая кнопка */
+        .love-button {
+            background-color: #ff69b4;
+            color: #ffffff;
+            border: none;
+            padding: 18px 36px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            z-index: 10;
+        }
+
+        .love-button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.8);
+            background-color: #ff52a2;
+        }
+
+        .love-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Исчезновение кнопки */
+        .love-button.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.3);
+        }
+
+        /* Контейнер для текстового сердца */
+        .heart-container {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        /* Анимация пульсации для всего сердца в конце */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); text-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+            100% { transform: scale(1); }
+        }
+
+        .heart-container.pulse-active {
+            animation: pulse 1.8s ease-in-out infinite;
+        }
+
+        /* Стиль для слов I LOVE YOU */
+        .heart-text {
+            position: absolute;
+            color: #ff0000;
+            font-size: 11px;
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            text-shadow: 0 0 6px rgba(255, 0, 0, 0.6);
+            white-space: nowrap;
+        }
+
+        .heart-text.show {
+            opacity: 1;
+        }
+
+        /* Стили для падающих лепестков роз */
+        .petal {
+            position: absolute;
+            background-color: #ffb7c5;
+            border-radius: 150px 0 150px 150px;
+            opacity: 0.7;
+            transform-origin: center;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% {
+                transform: translateY(105vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Всплывающие любовные фразы */
+        .love-phrase {
+            position: absolute;
+            color: #ffb7c5;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: floatPhrase 4s ease-in-out forwards;
+            max-width: 250px;
+            text-align: center;
+        }
+
+        @keyframes floatPhrase {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.9);
+            }
+            15% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            85% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Контейнеры для элементов -->
+    <div id="petals-container"></div>
+
+    <div class="container">
+        <button class="love-button" id="btn">я люблю тебя лучик❤️‍🔥</button>
+        <div class="heart-container" id="heart"></div>
+    </div>
+
+    <!-- Аудио плеер с локальным путем -->
+    <audio id="bg-music" loop>
+        <source src="/music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const btn = document.getElementById('btn');
+        const heartContainer = document.getElementById('heart');
+        const petalsContainer = document.getElementById('petals-container');
+        const music = document.getElementById('bg-music');
+
+        // Список фраз для Сашки
+        const phrases = [
+            "любимая, ты моё всё ❤️‍🔥",
+            "люблю тебя безумно!!11",
+            "ты самая лучшая на свете ❤️‍🔥",
+            "мое сердце бьётся только для тебя",
+            "ты моя бесконечность ❤️‍🔥",
+            "самая любимая девочка ❤️‍🔥",
+            "ты даришь мне счастье",
+            "хочу быть с тобой всегда",
+            "ты моё солнышко ❤️‍🔥",
+            "с каждым днём люблю безумнее.."
+        ];
+
+        // --- 1. Эффект падающих лепестков роз ---
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            const size = Math.random() * 12 + 8; 
+            const left = Math.random() * 100; 
+            const duration = Math.random() * 5 + 5; 
+            const delay = Math.random() * 5;
+
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size}px`;
+            petal.style.left = `${left}vw`;
+            petal.style.animationDuration = `${duration}s`;
+            petal.style.animationDelay = `-${delay}s`; 
+            
+            const colors = ['#ffb7c5', '#ffa6b9', '#ff94ad', '#ffccd7'];
+            petal.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            petalsContainer.appendChild(petal);
+
+            setTimeout(() => {
+                petal.remove();
+                createPetal();
+            }, (duration) * 1000);
+        }
+
+        // Генерируем стартовые лепестки
+        for (let i = 0; i < 40; i++) {
+            createPetal();
+        }
+
+        // --- 2. Функция появления случайных фраз ---
+        function spawnPhrase() {
+            const phrase = document.createElement('div');
+            phrase.classList.add('love-phrase');
+            
+            phrase.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+            
+            let x, y;
+            const side = Math.random() > 0.5; 
+            
+            if (side) {
+                x = Math.random() * 25; 
+            } else {
+                x = Math.random() * 25 + 75; 
+            }
+            
+            y = Math.random() * 70 + 15; 
+
+            phrase.style.left = `${x}vw`;
+            phrase.style.top = `${y}vh`;
+
+            document.body.appendChild(phrase);
+
+            setTimeout(() => {
+                phrase.remove();
+            }, 4000);
+        }
+
+        // --- 3. Математика рисования сердца ---
+        function getHeartPoint(t, scale) {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+            return { x: x * scale, y: -y * scale };
+        }
+
+        function createHeart() {
+            const totalWords = 90; 
+            const scale = 14;
+
+            for (let i = 0; i < totalWords; i++) {
+                const t = (i / totalWords) * 2 * Math.PI;
+                const point = getHeartPoint(t, scale);
+
+                const span = document.createElement('span');
+                span.className = 'heart-text';
+                span.innerText = 'I LOVE YOU';
+                
+                span.style.left = `calc(50% + ${point.x}px)`;
+                span.style.top = `calc(50% + ${point.y}px)`;
+                
+                let angle = t * (180 / Math.PI) - 90;
+                angle = (angle + 180) % 360 - 180;
+                
+                if (angle < -90 || angle > 90) {
+                    angle += 180;
+                }
+                
+                span.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(0)`;
+
+                heartContainer.appendChild(span);
+            }
+        }
+
+        function animateHeart() {
+            const words = document.querySelectorAll('.heart-text');
+            
+            words.forEach((word, index) => {
+                setTimeout(() => {
+                    const currentTransform = word.style.transform.replace('scale(0)', '');
+                    word.classList.add('show');
+                    word.style.transform = `${currentTransform} scale(1)`;
+
+                    if (index === words.length - 1) {
+                        setTimeout(() => {
+                            heartContainer.classList.add('pulse-active');
+                        }, 1000);
+                    }
+                }, index * 35); 
+            });
+        }
+
+        // --- 4. Обработка клика по кнопке ---
+        btn.addEventListener('click', () => {
+            music.volume = 0.4; 
+            music.play().catch(error => console.log("Браузер заблокировал автоплей"));
+
+            btn.classList.add('fade-out'); 
+            createHeart();                 
+            
+            setTimeout(animateHeart, 400); 
+
+            setInterval(spawnPhrase, 1500);
+        });
+    </script>
+</body>
+</html>
